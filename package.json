@@ -1,0 +1,49 @@
+{
+  "name": "mi-barrio-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/main.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:contract": "vitest run tests/contract",
+    "check:lines": "node scripts/check-line-limit.mjs",
+    "contracts:sync": "node scripts/sync-internal-contract.mjs",
+    "contracts:verify": "node scripts/sync-internal-contract.mjs --verify",
+    "contracts:types": "openapi-typescript contracts/internal.openapi.yaml -o src/contracts/internal-schema.ts",
+    "ci": "npm run lint && npm run typecheck && npm run check:lines && npm run contracts:verify && npm run test"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
+    "@types/supertest": "^6.0.3",
+    "eslint": "^9.39.1",
+    "openapi-typescript": "^7.13.0",
+    "supertest": "^7.2.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0",
+    "vitest": "^3.2.7"
+  }
+}
