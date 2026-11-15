@@ -27,6 +27,8 @@ npm run dev
 
 En contenedores, usar `BACKEND_URL=http://mi-barrio-backend:3001`; no depender de `localhost`.
 
+La configuración de `.env.example` distingue desarrollo local (`127.0.0.1`) de despliegue en red privada de contenedores (`mi-barrio-backend`). El backend no se publica en Internet.
+
 ## Endpoints públicos
 
 | Método | Ruta | Descripción |
