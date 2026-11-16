@@ -3,6 +3,9 @@ import request from 'supertest';
 import { createApp } from '../../src/http/app.js';
 import { GetBarrio } from '../../src/application/GetBarrio.js';
 import { GetBarrioGeometria } from '../../src/application/GetBarrioGeometria.js';
+import { GetCategorias } from '../../src/application/GetCategorias.js';
+import { GetLugares } from '../../src/application/GetLugares.js';
+import { GetLugar } from '../../src/application/GetLugar.js';
 import type { BarrioBackendPort } from '../../src/application/ports.js';
 import { BackendError, BackendTimeoutError } from '../../src/clients/backend/backendErrors.js';
 import { barrio, geometria } from '../fixtures.js';
@@ -11,11 +14,17 @@ function makeApp(overrides: Partial<BarrioBackendPort> = {}) {
   const backend: BarrioBackendPort = {
     getBarrio: async () => barrio,
     getBarrioGeometria: async () => geometria,
+    listCategorias: async () => [],
+    listLugares: async () => [],
+    getLugar: async () => ({}) as any,
     ...overrides
   };
   return createApp({
     getBarrio: new GetBarrio(backend),
     getBarrioGeometria: new GetBarrioGeometria(backend),
+    getCategorias: new GetCategorias(backend),
+    getLugares: new GetLugares(backend),
+    getLugar: new GetLugar(backend),
     frontendOrigin: 'http://127.0.0.1:5173'
   });
 }

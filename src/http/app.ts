@@ -3,6 +3,9 @@ import express, { type Express } from 'express';
 import helmet from 'helmet';
 import type { GetBarrio } from '../application/GetBarrio.js';
 import type { GetBarrioGeometria } from '../application/GetBarrioGeometria.js';
+import type { GetCategorias } from '../application/GetCategorias.js';
+import type { GetLugares } from '../application/GetLugares.js';
+import type { GetLugar } from '../application/GetLugar.js';
 import { createPublicRouter } from './routes/v1/barrioRoutes.js';
 import { requestId } from './middleware/requestId.js';
 import { createPublicRateLimit } from './middleware/rateLimit.js';
@@ -11,6 +14,9 @@ import { errorHandler, notFound } from './middleware/errorHandler.js';
 export interface AppDependencies {
   getBarrio: GetBarrio;
   getBarrioGeometria: GetBarrioGeometria;
+  getCategorias: GetCategorias;
+  getLugares: GetLugares;
+  getLugar: GetLugar;
   frontendOrigin: string;
 }
 

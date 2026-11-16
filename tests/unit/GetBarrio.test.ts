@@ -5,7 +5,10 @@ import { barrio, geometria } from '../fixtures.js';
 
 const backend: BarrioBackendPort = {
   getBarrio: async () => barrio,
-  getBarrioGeometria: async () => geometria
+  getBarrioGeometria: async () => geometria,
+  listCategorias: async () => [],
+  listLugares: async () => [],
+  getLugar: async () => ({}) as any
 };
 
 describe('GetBarrio', () => {

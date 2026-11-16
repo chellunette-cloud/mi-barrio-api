@@ -1,4 +1,4 @@
-import type { Barrio, BarrioGeometria } from '../../contracts/types.js';
+import type { Barrio, BarrioGeometria, Categoria, Lugar } from '../../contracts/types.js';
 import type { BarrioBackendPort } from '../../application/ports.js';
 import { validateInternal } from '../../contracts/validate.js';
 import { BackendError, BackendTimeoutError } from './backendErrors.js';
@@ -15,6 +15,23 @@ export class BackendClient implements BarrioBackendPort {
 
   getBarrioGeometria(): Promise<BarrioGeometria> {
     return this.request<BarrioGeometria>('/internal/v1/barrio/geometria', 'BarrioGeometria');
+  }
+
+  listCategorias(): Promise<Categoria[]> {
+    return this.request<Categoria[]>('/internal/v1/categorias', 'Categoria[]');
+  }
+
+  listLugares(params: { categoria?: string; q?: string; limite?: number }): Promise<Lugar[]> {
+    const search = new URLSearchParams();
+    if (params.categoria) search.set('categoria', params.categoria);
+    if (params.q) search.set('q', params.q);
+    if (params.limite) search.set('limite', String(params.limite));
+    const suffix = search.toString() ? `?${search.toString()}` : '';
+    return this.request<Lugar[]>(`/internal/v1/lugares${suffix}`, 'Lugar[]');
+  }
+
+  getLugar(id: number): Promise<Lugar> {
+    return this.request<Lugar>(`/internal/v1/lugares/${id}`, 'Lugar');
   }
 
   private async request<T>(path: string, schema: string): Promise<T> {
