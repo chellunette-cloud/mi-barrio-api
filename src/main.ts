@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { loadEnv } from './config/env.js';
 import { BackendClient } from './clients/backend/BackendClient.js';
+import { AdminBackendClient } from './clients/backend/AdminBackendClient.js';
 import { GetBarrio } from './application/GetBarrio.js';
 import { GetBarrioGeometria } from './application/GetBarrioGeometria.js';
 import { GetCategorias } from './application/GetCategorias.js';
@@ -14,6 +15,7 @@ import { createApp } from './http/app.js';
 function main(): void {
   const env = loadEnv();
   const backend = new BackendClient(env.BACKEND_URL, env.SERVICE_TOKEN);
+  const adminClient = new AdminBackendClient(env.BACKEND_URL, env.SERVICE_TOKEN);
   const app = createApp({
     getBarrio: new GetBarrio(backend),
     getBarrioGeometria: new GetBarrioGeometria(backend),
@@ -23,6 +25,7 @@ function main(): void {
     listVias: new ListVias(backend),
     getDemografia: new GetDemografia(backend),
     getSeguridad: new GetSeguridad(backend),
+    adminClient,
     frontendOrigin: env.FRONTEND_ORIGIN
   });
   app.listen(env.PORT, env.HOST, () => {

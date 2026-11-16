@@ -34,6 +34,15 @@ function makeApp(overrides: Partial<BarrioBackendPort> = {}) {
     listVias: new ListVias(backend),
     getDemografia: new GetDemografia(backend),
     getSeguridad: new GetSeguridad(backend),
+    adminClient: {
+      login: async () => ({}),
+      refresh: async () => ({}),
+      listLugares: async () => [],
+      createLugar: async () => ({}),
+      updateLugar: async () => ({}),
+      deleteLugar: async () => undefined,
+      audit: async () => []
+    },
     frontendOrigin: 'http://127.0.0.1:5173'
   });
 }

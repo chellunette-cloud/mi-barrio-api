@@ -4,10 +4,7 @@ import { validateInternal } from '../../contracts/validate.js';
 import { BackendError, BackendTimeoutError } from './backendErrors.js';
 
 export class BackendClient implements BarrioBackendPort {
-  constructor(
-    private readonly baseUrl: string,
-    private readonly serviceToken: string
-  ) {}
+  constructor(private readonly baseUrl: string, private readonly serviceToken: string) {}
 
   getBarrio(): Promise<Barrio> {
     return this.request<Barrio>('/internal/v1/barrio', 'Barrio');
@@ -47,11 +44,13 @@ export class BackendClient implements BarrioBackendPort {
     return this.request<Seguridad>('/internal/v1/estadisticas/seguridad', 'Seguridad');
   }
 
-  private async request<T>(path: string, schema: string): Promise<T> {
+  private async request<T>(path: string, schema: string, method = 'GET', body?: unknown): Promise<T> {
     let response: Response;
     try {
       response = await fetch(new URL(path, this.baseUrl), {
-        headers: { Accept: 'application/json', 'X-Service-Token': this.serviceToken },
+        method,
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-Service-Token': this.serviceToken },
+        body: body ? JSON.stringify(body) : undefined,
         signal: AbortSignal.timeout(5000)
       });
     } catch (error) {
