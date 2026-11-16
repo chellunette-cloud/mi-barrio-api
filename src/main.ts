@@ -7,6 +7,8 @@ import { GetCategorias } from './application/GetCategorias.js';
 import { GetLugares } from './application/GetLugares.js';
 import { GetLugar } from './application/GetLugar.js';
 import { ListVias } from './application/ListVias.js';
+import { GetDemografia } from './application/GetDemografia.js';
+import { GetSeguridad } from './application/GetSeguridad.js';
 import { createApp } from './http/app.js';
 
 function main(): void {
@@ -19,6 +21,8 @@ function main(): void {
     getLugares: new GetLugares(backend),
     getLugar: new GetLugar(backend),
     listVias: new ListVias(backend),
+    getDemografia: new GetDemografia(backend),
+    getSeguridad: new GetSeguridad(backend),
     frontendOrigin: env.FRONTEND_ORIGIN
   });
   app.listen(env.PORT, env.HOST, () => {

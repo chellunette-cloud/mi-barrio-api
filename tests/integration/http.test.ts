@@ -7,6 +7,8 @@ import { GetCategorias } from '../../src/application/GetCategorias.js';
 import { GetLugares } from '../../src/application/GetLugares.js';
 import { GetLugar } from '../../src/application/GetLugar.js';
 import { ListVias } from '../../src/application/ListVias.js';
+import { GetDemografia } from '../../src/application/GetDemografia.js';
+import { GetSeguridad } from '../../src/application/GetSeguridad.js';
 import type { BarrioBackendPort } from '../../src/application/ports.js';
 import { BackendError, BackendTimeoutError } from '../../src/clients/backend/backendErrors.js';
 import { barrio, geometria } from '../fixtures.js';
@@ -19,6 +21,8 @@ function makeApp(overrides: Partial<BarrioBackendPort> = {}) {
     listLugares: async () => [],
     getLugar: async () => ({}) as any,
     listVias: async () => [],
+    getDemografia: async () => ({}) as any,
+    getSeguridad: async () => ({}) as any,
     ...overrides
   };
   return createApp({
@@ -28,6 +32,8 @@ function makeApp(overrides: Partial<BarrioBackendPort> = {}) {
     getLugares: new GetLugares(backend),
     getLugar: new GetLugar(backend),
     listVias: new ListVias(backend),
+    getDemografia: new GetDemografia(backend),
+    getSeguridad: new GetSeguridad(backend),
     frontendOrigin: 'http://127.0.0.1:5173'
   });
 }

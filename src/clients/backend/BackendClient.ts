@@ -1,4 +1,4 @@
-import type { Barrio, BarrioGeometria, Categoria, Lugar, Via } from '../../contracts/types.js';
+import type { Barrio, BarrioGeometria, Categoria, Lugar, Via, Demografia, Seguridad } from '../../contracts/types.js';
 import type { BarrioBackendPort } from '../../application/ports.js';
 import { validateInternal } from '../../contracts/validate.js';
 import { BackendError, BackendTimeoutError } from './backendErrors.js';
@@ -37,6 +37,14 @@ export class BackendClient implements BarrioBackendPort {
   listVias(highway?: string): Promise<Via[]> {
     const suffix = highway ? `?highway=${encodeURIComponent(highway)}` : '';
     return this.request<Via[]>(`/internal/v1/vias${suffix}`, 'Via[]');
+  }
+
+  getDemografia(): Promise<Demografia> {
+    return this.request<Demografia>('/internal/v1/estadisticas/demografia', 'Demografia');
+  }
+
+  getSeguridad(): Promise<Seguridad> {
+    return this.request<Seguridad>('/internal/v1/estadisticas/seguridad', 'Seguridad');
   }
 
   private async request<T>(path: string, schema: string): Promise<T> {

@@ -9,7 +9,9 @@ const backend: BarrioBackendPort = {
   listCategorias: async () => [],
   listLugares: async () => [],
   getLugar: async () => ({}) as any,
-  listVias: async () => []
+  listVias: async () => [],
+  getDemografia: async () => ({}) as any,
+  getSeguridad: async () => ({}) as any
 };
 
 describe('GetBarrio', () => {

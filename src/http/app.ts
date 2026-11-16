@@ -7,7 +7,10 @@ import type { GetCategorias } from '../application/GetCategorias.js';
 import type { GetLugares } from '../application/GetLugares.js';
 import type { GetLugar } from '../application/GetLugar.js';
 import type { ListVias } from '../application/ListVias.js';
+import type { GetDemografia } from '../application/GetDemografia.js';
+import type { GetSeguridad } from '../application/GetSeguridad.js';
 import { createPublicRouter } from './routes/v1/barrioRoutes.js';
+import { createStatsRouter } from './routes/v1/statsRoutes.js';
 import { requestId } from './middleware/requestId.js';
 import { createPublicRateLimit } from './middleware/rateLimit.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
@@ -19,6 +22,8 @@ export interface AppDependencies {
   getLugares: GetLugares;
   getLugar: GetLugar;
   listVias: ListVias;
+  getDemografia: GetDemografia;
+  getSeguridad: GetSeguridad;
   frontendOrigin: string;
 }
 
@@ -34,6 +39,7 @@ export function createApp(deps: AppDependencies): Express {
     res.json({ status: 'ok', service: 'mi-barrio-api' });
   });
   app.use('/api/v1', createPublicRouter(deps));
+  app.use('/api/v1', createStatsRouter(deps));
   app.use(notFound);
   app.use(errorHandler);
   return app;
