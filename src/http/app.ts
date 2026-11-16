@@ -6,6 +6,7 @@ import type { GetBarrioGeometria } from '../application/GetBarrioGeometria.js';
 import type { GetCategorias } from '../application/GetCategorias.js';
 import type { GetLugares } from '../application/GetLugares.js';
 import type { GetLugar } from '../application/GetLugar.js';
+import type { ListVias } from '../application/ListVias.js';
 import { createPublicRouter } from './routes/v1/barrioRoutes.js';
 import { requestId } from './middleware/requestId.js';
 import { createPublicRateLimit } from './middleware/rateLimit.js';
@@ -17,6 +18,7 @@ export interface AppDependencies {
   getCategorias: GetCategorias;
   getLugares: GetLugares;
   getLugar: GetLugar;
+  listVias: ListVias;
   frontendOrigin: string;
 }
 

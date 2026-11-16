@@ -100,6 +100,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/v1/vias": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listViasInternas"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -251,6 +267,19 @@ export interface components {
             /** @example F-04 */
             fuentePrincipal: string;
             fuentes: string[];
+        };
+        Via: {
+            /** @example 1 */
+            id: number;
+            /** @example Calle 38 Sur */
+            nombre?: string | null;
+            /** @example residential */
+            highway: string;
+            coordenadas: number[][];
+            /** @example false */
+            dentroBarrio: boolean;
+            /** @example F-16 */
+            fuentePrincipal: string;
         };
         Error: {
             error: {
@@ -448,6 +477,30 @@ export interface operations {
             };
             401: components["responses"]["NoAutorizado"];
             404: components["responses"]["NoEncontrado"];
+            500: components["responses"]["ErrorInterno"];
+        };
+    };
+    listViasInternas: {
+        parameters: {
+            query?: {
+                highway?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tramos viales */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Via"][];
+                };
+            };
+            401: components["responses"]["NoAutorizado"];
             500: components["responses"]["ErrorInterno"];
         };
     };

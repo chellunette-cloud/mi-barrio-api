@@ -6,6 +6,7 @@ import { GetBarrioGeometria } from './application/GetBarrioGeometria.js';
 import { GetCategorias } from './application/GetCategorias.js';
 import { GetLugares } from './application/GetLugares.js';
 import { GetLugar } from './application/GetLugar.js';
+import { ListVias } from './application/ListVias.js';
 import { createApp } from './http/app.js';
 
 function main(): void {
@@ -17,6 +18,7 @@ function main(): void {
     getCategorias: new GetCategorias(backend),
     getLugares: new GetLugares(backend),
     getLugar: new GetLugar(backend),
+    listVias: new ListVias(backend),
     frontendOrigin: env.FRONTEND_ORIGIN
   });
   app.listen(env.PORT, env.HOST, () => {

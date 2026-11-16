@@ -10,6 +10,7 @@ import { GetBarrioGeometria } from '../../src/application/GetBarrioGeometria.js'
 import { GetCategorias } from '../../src/application/GetCategorias.js';
 import { GetLugares } from '../../src/application/GetLugares.js';
 import { GetLugar } from '../../src/application/GetLugar.js';
+import { ListVias } from '../../src/application/ListVias.js';
 import type { BarrioBackendPort } from '../../src/application/ports.js';
 import { barrio, geometria } from '../fixtures.js';
 
@@ -18,7 +19,8 @@ const backend: BarrioBackendPort = {
   getBarrioGeometria: async () => geometria,
   listCategorias: async () => [],
   listLugares: async () => [],
-  getLugar: async () => ({}) as any
+  getLugar: async () => ({}) as any,
+  listVias: async () => []
 };
 const app = createApp({
   getBarrio: new GetBarrio(backend),
@@ -26,6 +28,7 @@ const app = createApp({
   getCategorias: new GetCategorias(backend),
   getLugares: new GetLugares(backend),
   getLugar: new GetLugar(backend),
+  listVias: new ListVias(backend),
   frontendOrigin: 'http://127.0.0.1:5173'
 });
 

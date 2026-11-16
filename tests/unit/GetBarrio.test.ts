@@ -8,7 +8,8 @@ const backend: BarrioBackendPort = {
   getBarrioGeometria: async () => geometria,
   listCategorias: async () => [],
   listLugares: async () => [],
-  getLugar: async () => ({}) as any
+  getLugar: async () => ({}) as any,
+  listVias: async () => []
 };
 
 describe('GetBarrio', () => {
