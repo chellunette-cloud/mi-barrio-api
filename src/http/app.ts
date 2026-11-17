@@ -13,6 +13,7 @@ import { createPublicRouter } from './routes/v1/barrioRoutes.js';
 import { createStatsRouter } from './routes/v1/statsRoutes.js';
 import { createAuthRouter } from './routes/v1/authRoutes.js';
 import { createAdminRouter } from './routes/v1/adminRoutes.js';
+import type { AdminClientPort } from './adminClientPort.js';
 import { requestId } from './middleware/requestId.js';
 import { createPublicRateLimit } from './middleware/rateLimit.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
@@ -26,17 +27,23 @@ export interface AppDependencies {
   listVias: ListVias;
   getDemografia: GetDemografia;
   getSeguridad: GetSeguridad;
-  adminClient: { login(username: string, password: string): Promise<unknown>; refresh(refreshToken: string): Promise<unknown>; listLugares(token: string): Promise<unknown>; createLugar(token: string, body: unknown): Promise<unknown>; updateLugar(token: string, id: number, body: unknown): Promise<unknown>; deleteLugar(token: string, id: number): Promise<void>; audit(token: string): Promise<unknown>; };
+  adminClient: AdminClientPort;
   frontendOrigin: string;
+  rateLimitMax?: number;
 }
 
 export function createApp(deps: AppDependencies): Express {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
-  app.use(cors({ origin: deps.frontendOrigin, methods: ['GET'], maxAge: 86400 }));
+  app.use(cors({
+    origin: deps.frontendOrigin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400
+  }));
   app.use(requestId);
-  app.use(createPublicRateLimit());
+  app.use(createPublicRateLimit(deps.rateLimitMax));
   app.use(express.json({ limit: '8kb' }));
   app.get('/api/v1/health', (_req, res) => {
     res.json({ status: 'ok', service: 'mi-barrio-api' });

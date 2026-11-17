@@ -25,6 +25,10 @@ export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
     return;
   }
   if (error instanceof BackendError) {
+    if (error.status >= 400 && error.status < 500 && error.status !== 404) {
+      res.status(error.status).json({ error: { code: error.code, message: error.message, requestId } });
+      return;
+    }
     const status = error.status === 404 ? 404 : 502;
     const code = error.status === 404 ? 'NO_ENCONTRADO' : 'DEPENDENCIA_NO_DISPONIBLE';
     console.error(JSON.stringify({ level: 'error', requestId, backendStatus: error.status, code: error.code }));

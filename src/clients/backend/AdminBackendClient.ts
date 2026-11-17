@@ -1,3 +1,5 @@
+import { BackendError } from './backendErrors.js';
+
 export class AdminBackendClient {
   constructor(private readonly baseUrl: string, private readonly serviceToken: string) {}
 
@@ -25,6 +27,23 @@ export class AdminBackendClient {
     await this.request(`/internal/v1/admin/lugares/${id}`, 'DELETE', undefined, token);
   }
 
+  async listCategorias(token: string): Promise<unknown> {
+    return this.get('/internal/v1/admin/categorias', token);
+  }
+
+  async createCategoria(token: string, body: unknown): Promise<unknown> {
+    return this.post('/internal/v1/admin/categorias', body, token);
+  }
+
+  async updateCategoria(token: string, id: number, body: unknown): Promise<unknown> {
+    return this.put(`/internal/v1/admin/categorias/${id}`, body, token);
+  }
+
+  async deleteCategoria(token: string, id: number, reasignarA?: number): Promise<void> {
+    const query = reasignarA ? `?reasignarA=${reasignarA}` : '';
+    await this.request(`/internal/v1/admin/categorias/${id}${query}`, 'DELETE', undefined, token);
+  }
+
   async audit(token: string): Promise<unknown> {
     return this.get('/internal/v1/admin/auditoria', token);
   }
@@ -48,7 +67,14 @@ export class AdminBackendClient {
       body: body ? JSON.stringify(body) : undefined,
       signal: AbortSignal.timeout(5000)
     });
-    if (!response.ok) throw new Error(`Backend respondió ${response.status}`);
+    if (!response.ok) {
+      const body = (await response.json().catch(() => ({}))) as { error?: { code?: string; message?: string } };
+      throw new BackendError(
+        response.status,
+        body.error?.code ?? 'BACKEND_ERROR',
+        body.error?.message ?? `El backend respondió ${response.status}`
+      );
+    }
     if (method === 'DELETE') return undefined;
     return response.json();
   }

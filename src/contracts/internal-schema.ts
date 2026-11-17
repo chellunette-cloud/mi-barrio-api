@@ -180,6 +180,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/v1/admin/categorias": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listAdminCategorias"];
+        put?: never;
+        post: operations["createAdminCategoria"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/internal/v1/admin/categorias/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateAdminCategoria"];
+        post?: never;
+        delete: operations["deleteAdminCategoria"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/v1/estadisticas/demografia": {
         parameters: {
             query?: never;
@@ -335,6 +367,13 @@ export interface components {
             /** @example true */
             activa: boolean;
         };
+        CategoriaInput: {
+            codigo: string;
+            nombre: string;
+            descripcion: string;
+            /** @default true */
+            activa: boolean;
+        };
         Lugar: {
             /** @example 1 */
             id: number;
@@ -350,6 +389,11 @@ export interface components {
             sector?: "oficial" | "privado" | "no informado" | null;
             /** @example colegio */
             tipo?: string | null;
+            /**
+             * @description Código externo verificable; en paraderos corresponde al código SITP
+             * @example 029A08
+             */
+            codigo: string | null;
             /** @example 4.6408567 */
             lat: number;
             /** @example -74.1702362 */
@@ -417,6 +461,16 @@ export interface components {
                     /** @example 66955 */
                     mujeres: number;
                 };
+                quinquenios: {
+                    /** @example 0-4 */
+                    edad: string;
+                    /** @example 5006 */
+                    hombres: number;
+                    /** @example 4900 */
+                    mujeres: number;
+                    /** @example 9906 */
+                    total: number;
+                }[];
                 /** @example F-03 */
                 fuente: string;
             };
@@ -503,6 +557,15 @@ export interface components {
         };
         /** @description Parámetros inválidos */
         SolicitudInvalida: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description La operación entra en conflicto con datos existentes */
+        Conflicto: {
             headers: {
                 [name: string]: unknown;
             };
@@ -849,6 +912,115 @@ export interface operations {
             };
             401: components["responses"]["NoAutorizado"];
             404: components["responses"]["NoEncontrado"];
+            500: components["responses"]["ErrorInterno"];
+        };
+    };
+    listAdminCategorias: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Categorías administrables, incluidas las inactivas */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Categoria"][];
+                };
+            };
+            401: components["responses"]["NoAutorizado"];
+            500: components["responses"]["ErrorInterno"];
+        };
+    };
+    createAdminCategoria: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategoriaInput"];
+            };
+        };
+        responses: {
+            /** @description Categoría creada */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Categoria"];
+                };
+            };
+            400: components["responses"]["SolicitudInvalida"];
+            401: components["responses"]["NoAutorizado"];
+            409: components["responses"]["Conflicto"];
+            500: components["responses"]["ErrorInterno"];
+        };
+    };
+    updateAdminCategoria: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategoriaInput"];
+            };
+        };
+        responses: {
+            /** @description Categoría actualizada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Categoria"];
+                };
+            };
+            400: components["responses"]["SolicitudInvalida"];
+            401: components["responses"]["NoAutorizado"];
+            404: components["responses"]["NoEncontrado"];
+            409: components["responses"]["Conflicto"];
+            500: components["responses"]["ErrorInterno"];
+        };
+    };
+    deleteAdminCategoria: {
+        parameters: {
+            query?: {
+                /** @description Categoría destino para reasignar los lugares antes de eliminar */
+                reasignarA?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Categoría eliminada */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: components["responses"]["SolicitudInvalida"];
+            401: components["responses"]["NoAutorizado"];
+            404: components["responses"]["NoEncontrado"];
+            409: components["responses"]["Conflicto"];
             500: components["responses"]["ErrorInterno"];
         };
     };

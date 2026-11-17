@@ -1,9 +1,9 @@
 import rateLimit from 'express-rate-limit';
 
-export function createPublicRateLimit() {
+export function createPublicRateLimit(limit = 120) {
   return rateLimit({
     windowMs: 60_000,
-    limit: 120,
+    limit,
     standardHeaders: 'draft-7',
     legacyHeaders: false,
     handler: (_req, res) => {

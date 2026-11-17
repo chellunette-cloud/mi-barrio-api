@@ -42,6 +42,10 @@ const app = createApp({
     createLugar: async () => ({}),
     updateLugar: async () => ({}),
     deleteLugar: async () => undefined,
+    listCategorias: async () => [],
+    createCategoria: async () => ({}),
+    updateCategoria: async () => ({}),
+    deleteCategoria: async () => undefined,
     audit: async () => []
   },
   frontendOrigin: 'http://127.0.0.1:5173'

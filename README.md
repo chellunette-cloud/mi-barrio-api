@@ -1,6 +1,7 @@
 # mi-barrio-api
 
-API pública de **Mi Barrio – Ciudad Granada** para HU-01 y HU-02. Es un repositorio independiente:
+API pública de **Mi Barrio – Ciudad Granada** para el avance de Fase 11.2 (HU-01 a HU-13), incluida
+la autenticación administrativa y los endpoints de administración. Es un repositorio independiente:
 no importa código de `mi-barrio-backend` ni de `mi-barrio-frontend`; solo consume el contrato HTTP
 interno y publica el contrato HTTP público.
 
@@ -36,6 +37,9 @@ La configuración de `.env.example` distingue desarrollo local (`127.0.0.1`) de 
 | `GET` | `/api/v1/health` | Salud de la API |
 | `GET` | `/api/v1/barrio` | Ficha territorial y fuentes (HU-01) |
 | `GET` | `/api/v1/barrio/geometria` | Polígono oficial WGS84 y centroide (HU-02) |
+
+El contrato público `contracts/public.openapi.yaml` contiene la lista completa de endpoints de
+lugares, estadísticas, filtros, autenticación y administración.
 
 Respuestas exitosas: `Cache-Control: public, max-age=300, stale-while-revalidate=60`. CORS solo
 permite `FRONTEND_ORIGIN`. Rate limit: 120 solicitudes por minuto y por IP. Los errores públicos no
@@ -79,8 +83,10 @@ generado `src/contracts/internal-schema.ts` se excluye como artefacto reproducib
 
 ## Evidencia y limitaciones
 
-- Evidencia de Fase 1: `../docs/evidencias/fase-1/`.
-- No hay autenticación pública ni endpoints administrativos en esta fase.
-- El backend debe permanecer en la red privada; esta API es la única frontera pública.
+- La documentación académica y las capturas de evidencia se conservan fuera de este repositorio.
+- El avance de Fase 11.2 está en el código y en las pruebas; las HU-03 a HU-06 siguen en desarrollo.
+- La API expone autenticación y endpoints administrativos; el backend debe permanecer en la red
+  privada y esta API es la única frontera pública.
 - El workflow de CI no levanta el backend real; las pruebas de contrato usan el contrato y un puerto
   simulado. La prueba end-to-end se ejecutó localmente y está documentada en la evidencia.
+- El despliegue no forma parte de este repositorio.
