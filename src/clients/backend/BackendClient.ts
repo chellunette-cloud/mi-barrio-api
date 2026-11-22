@@ -18,10 +18,11 @@ export class BackendClient implements BarrioBackendPort {
     return this.request<Categoria[]>('/internal/v1/categorias', 'Categoria[]');
   }
 
-  listLugares(params: { categoria?: string; q?: string; limite?: number }): Promise<Lugar[]> {
+  listLugares(params: { categoria?: string; q?: string; tipo?: string; limite?: number }): Promise<Lugar[]> {
     const search = new URLSearchParams();
     if (params.categoria) search.set('categoria', params.categoria);
     if (params.q) search.set('q', params.q);
+    if (params.tipo) search.set('tipo', params.tipo);
     if (params.limite) search.set('limite', String(params.limite));
     const suffix = search.toString() ? `?${search.toString()}` : '';
     return this.request<Lugar[]>(`/internal/v1/lugares${suffix}`, 'Lugar[]');

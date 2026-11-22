@@ -10,8 +10,18 @@ import { ListVias } from '../../src/application/ListVias.js';
 import { GetDemografia } from '../../src/application/GetDemografia.js';
 import { GetSeguridad } from '../../src/application/GetSeguridad.js';
 import type { BarrioBackendPort } from '../../src/application/ports.js';
+import type { AdminClientPort } from '../../src/http/adminClientPort.js';
 import { BackendError, BackendTimeoutError } from '../../src/clients/backend/backendErrors.js';
 import { barrio, geometria } from '../fixtures.js';
+
+const adminClientStub: AdminClientPort = {
+  login: async () => ({}), refresh: async () => ({}),
+  listLugares: async () => [], createLugar: async () => ({}),
+  updateLugar: async () => ({}), deleteLugar: async () => undefined,
+  listCategorias: async () => [], createCategoria: async () => ({}),
+  updateCategoria: async () => ({}), deleteCategoria: async () => undefined,
+  audit: async () => []
+};
 
 function makeApp(overrides: Partial<BarrioBackendPort> = {}) {
   const backend: BarrioBackendPort = {
@@ -34,19 +44,7 @@ function makeApp(overrides: Partial<BarrioBackendPort> = {}) {
     listVias: new ListVias(backend),
     getDemografia: new GetDemografia(backend),
     getSeguridad: new GetSeguridad(backend),
-    adminClient: {
-      login: async () => ({}),
-      refresh: async () => ({}),
-      listLugares: async () => [],
-      createLugar: async () => ({}),
-      updateLugar: async () => ({}),
-      deleteLugar: async () => undefined,
-      listCategorias: async () => [],
-      createCategoria: async () => ({}),
-      updateCategoria: async () => ({}),
-      deleteCategoria: async () => undefined,
-      audit: async () => []
-    },
+    adminClient: adminClientStub,
     frontendOrigin: 'http://127.0.0.1:5173'
   });
 }
@@ -77,5 +75,26 @@ describe('API pública', () => {
       .get('/api/v1/barrio');
     expect(unavailable.status).toBe(504);
     expect(unavailable.body.error.code).toBe('TIEMPO_AGOTADO');
+  });
+
+  it('propaga búsqueda y subcategoría al backend sin cambiar el contrato', async () => {
+    let recibido: unknown;
+    const app = makeApp({ listLugares: async (params) => { recibido = params; return []; } });
+    const response = await request(app)
+      .get('/api/v1/lugares?q=nino&tipo=supermarket');
+    expect(response.status).toBe(200);
+    expect(recibido).toMatchObject({ q: 'nino', tipo: 'supermarket' });
+  });
+
+  it('rechaza una búsqueda fuera de la longitud del contrato', async () => {
+    const response = await request(makeApp()).get(`/api/v1/lugares?q=${'x'.repeat(61)}`);
+    expect(response.status).toBe(400);
+    expect(response.body.error.code).toBe('FILTRO_INVALIDO');
+  });
+
+  it('rechaza una subcategoría inválida antes de consultar el backend', async () => {
+    const response = await request(makeApp()).get(`/api/v1/lugares?tipo=${'x'.repeat(61)}`);
+    expect(response.status).toBe(400);
+    expect(response.body.error.code).toBe('FILTRO_INVALIDO');
   });
 });

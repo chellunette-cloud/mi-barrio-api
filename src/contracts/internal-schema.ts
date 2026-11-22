@@ -688,6 +688,8 @@ export interface operations {
             query?: {
                 categoria?: string;
                 q?: string;
+                /** @description Subcategoría verificable de la fuente (por ejemplo, shop de OSM) */
+                tipo?: string;
                 limite?: number;
             };
             header?: never;

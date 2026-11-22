@@ -28,4 +28,28 @@ describe('BackendClient', () => {
     const client = new BackendClient('http://backend.internal:3001', 'internal-token-1234567890');
     await expect(client.getBarrio()).rejects.toBeInstanceOf(BackendError);
   });
+
+  it('codifica la búsqueda y la subcategoría en la URL interna', async () => {
+    let url: URL | undefined;
+    const fetchMock = vi.fn(async (input: URL | string) => {
+      url = input as URL;
+      return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const client = new BackendClient('http://backend.internal:3001', 'internal-token-1234567890');
+    await client.listLugares({ q: 'niño', tipo: 'supermarket' });
+    expect(url?.searchParams.get('q')).toBe('niño');
+    expect(url?.searchParams.get('tipo')).toBe('supermarket');
+  });
+
+  it('codifica una búsqueda por dirección con espacios', async () => {
+    let url: URL | undefined;
+    vi.stubGlobal('fetch', vi.fn(async (input: URL | string) => {
+      url = input as URL;
+      return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }));
+    const client = new BackendClient('http://backend.internal:3001', 'internal-token-1234567890');
+    await client.listLugares({ q: 'cl 40 sur' });
+    expect(url?.searchParams.get('q')).toBe('cl 40 sur');
+  });
 });

@@ -4,6 +4,7 @@ import type { BarrioBackendPort } from './ports.js';
 export interface LugaresParams {
   categoria?: string;
   q?: string;
+  tipo?: string;
   limite?: number;
 }
 

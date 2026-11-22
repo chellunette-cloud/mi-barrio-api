@@ -56,6 +56,7 @@ describe('Contrato público', () => {
     const raw = readFileSync(join(process.cwd(), 'contracts/public.openapi.yaml'), 'utf8');
     expect(raw).toContain('/api/v1/barrio:');
     expect(raw).toContain('/api/v1/barrio/geometria:');
+    expect(raw).toMatch(/- name: q\s+in: query\s+schema: \{ type: string, maxLength: 60 \}/);
     const contract = parse(raw) as Record<string, unknown>;
     const ajv = new Ajv({ strict: false, validateFormats: false, allErrors: true });
     ajv.addSchema(contract, 'public');
