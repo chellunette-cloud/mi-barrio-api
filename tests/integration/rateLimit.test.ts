@@ -13,7 +13,8 @@ function makeApp(rateLimitMax: number) {
       refresh: async () => ({ accessToken: 'test-token' })
     },
     frontendOrigin: ORIGIN,
-    rateLimitMax
+    rateLimitMax,
+    diagnosticToken: 'service-token-test'
   } as any);
 }
 
@@ -83,5 +84,17 @@ describe('Compatibilidad de middleware', () => {
     const missing = await request(app).get('/api/v1/inexistente');
     expect(missing.status).toBe(404);
     expect(missing.body.error.code).toBe('RUTA_NO_ENCONTRADA');
+  });
+});
+describe('Diagnóstico de proxy', () => {
+  it('rechaza consulta sin token', async () => {
+    const r = await request(makeApp(120)).get('/internal/v1/diagnostico-ip');
+    expect(r.status).toBe(401); expect(r.body.error.code).toBe('NO_AUTORIZADO');
+  });
+  it('expone ip, ips y trust proxy con token válido', async () => {
+    const r = await request(makeApp(120)).get('/internal/v1/diagnostico-ip')
+      .set('x-service-token', 'service-token-test').set('X-Forwarded-For', '198.51.100.10, 203.0.113.10');
+    expect(r.status).toBe(200);
+    expect(r.body.ip).toBe('203.0.113.10'); expect(r.body.trustProxy).toBe(1); expect(r.body.ips).toEqual(['203.0.113.10']);
   });
 });

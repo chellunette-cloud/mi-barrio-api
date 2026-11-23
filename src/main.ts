@@ -27,7 +27,8 @@ function main(): void {
     getSeguridad: new GetSeguridad(backend),
     adminClient,
     frontendOrigin: env.FRONTEND_ORIGIN,
-    rateLimitMax: env.RATE_LIMIT_MAX
+    rateLimitMax: env.RATE_LIMIT_MAX,
+    diagnosticToken: env.SERVICE_TOKEN
   });
   app.listen(env.PORT, env.HOST, () => {
     console.log(`mi-barrio-api escuchando en ${env.HOST}:${env.PORT} -> ${env.BACKEND_URL}`);

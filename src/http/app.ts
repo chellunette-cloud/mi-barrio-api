@@ -1,4 +1,5 @@
 import cors from 'cors';
+import { timingSafeEqual } from 'node:crypto';
 import express, { type Express } from 'express';
 import helmet from 'helmet';
 import type { GetBarrio } from '../application/GetBarrio.js';
@@ -30,6 +31,7 @@ export interface AppDependencies {
   adminClient: AdminClientPort;
   frontendOrigin: string;
   rateLimitMax?: number;
+  diagnosticToken?: string;
 }
 
 export function createApp(deps: AppDependencies): Express {
@@ -46,6 +48,18 @@ export function createApp(deps: AppDependencies): Express {
     maxAge: 86400
   }));
   app.use(requestId);
+  app.get('/internal/v1/diagnostico-ip', (req, res) => {
+    if (!deps.diagnosticToken || !tokenValido(req.header('x-service-token'), deps.diagnosticToken)) {
+      res.status(401).json({ error: { code: 'NO_AUTORIZADO', message: 'Token de servicio inválido' } });
+      return;
+    }
+    res.set('Cache-Control', 'no-store').json({
+      ip: req.ip ?? null,
+      ips: req.ips,
+      forwardedFor: req.header('x-forwarded-for') ?? null,
+      trustProxy: app.get('trust proxy')
+    });
+  });
   app.use(createPublicRateLimit(deps.rateLimitMax));
   app.use(express.json({ limit: '8kb' }));
   app.get('/api/v1/health', (_req, res) => {
@@ -58,4 +72,11 @@ export function createApp(deps: AppDependencies): Express {
   app.use(notFound);
   app.use(errorHandler);
   return app;
+}
+
+function tokenValido(valor: string | undefined, esperado: string): boolean {
+  if (!valor) return false;
+  const recibido = Buffer.from(valor);
+  const referencia = Buffer.from(esperado);
+  return recibido.length === referencia.length && timingSafeEqual(recibido, referencia);
 }
