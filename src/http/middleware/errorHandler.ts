@@ -3,6 +3,7 @@ import { BackendError, BackendTimeoutError } from '../../clients/backend/backend
 import { HttpError } from '../../lib/httpError.js';
 
 export const notFound: RequestHandler = (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
   res.status(404).json({
     error: {
       code: 'RUTA_NO_ENCONTRADA',
@@ -13,6 +14,9 @@ export const notFound: RequestHandler = (req, res) => {
 };
 
 export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
+  // Un error transitorio (por ejemplo, 502 durante el arranque en frio) no
+  // debe quedar cacheado por el navegador bajo el Cache-Control publico de GET.
+  res.setHeader('Cache-Control', 'no-store');
   const requestId = res.locals.requestId ?? null;
   if (error instanceof HttpError) {
     res.status(error.status).json({ error: { code: error.code, message: error.message, requestId } });

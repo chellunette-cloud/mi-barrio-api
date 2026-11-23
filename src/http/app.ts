@@ -17,6 +17,7 @@ import { createAdminRouter } from './routes/v1/adminRoutes.js';
 import type { AdminClientPort } from './adminClientPort.js';
 import { requestId } from './middleware/requestId.js';
 import { createPublicRateLimit } from './middleware/rateLimit.js';
+import { clientIp, clientIpSource } from './middleware/clientIp.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 
 export interface AppDependencies {
@@ -36,8 +37,8 @@ export interface AppDependencies {
 
 export function createApp(deps: AppDependencies): Express {
   const app = express();
-  // Render terminates TLS and forwards through its edge proxy. Trust one hop,
-  // never the permissive `true` value: the proxy must append the real client IP.
+  // Render terminates TLS and forwards through several hops. `1` keeps Express
+  // conservative; the limiter keys on clientIp() (CF-Connecting-IP), not on req.ip.
   app.set('trust proxy', 1);
   app.disable('x-powered-by');
   app.use(helmet());
@@ -57,6 +58,9 @@ export function createApp(deps: AppDependencies): Express {
       ip: req.ip ?? null,
       ips: req.ips,
       forwardedFor: req.header('x-forwarded-for') ?? null,
+      cfConnectingIp: req.header('cf-connecting-ip') ?? null,
+      clientIp: clientIp(req),
+      clientIpSource: clientIpSource(req),
       trustProxy: app.get('trust proxy')
     });
   });
