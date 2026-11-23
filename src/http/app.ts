@@ -34,6 +34,9 @@ export interface AppDependencies {
 
 export function createApp(deps: AppDependencies): Express {
   const app = express();
+  // Render terminates TLS and forwards through its edge proxy. Trust one hop,
+  // never the permissive `true` value: the proxy must append the real client IP.
+  app.set('trust proxy', 1);
   app.disable('x-powered-by');
   app.use(helmet());
   app.use(cors({
